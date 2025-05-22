@@ -1,14 +1,16 @@
+import math 
 
-def dot_product(vector1: list[float], vector2 : list[float]) -> float :
+
+def euclidean_distance(vector1: list[float], vector2 : list[float]) -> float :
     """
-    A method for finding the dot product of two vectors.
+    A method for finding the euclidean distance of two vectors.
     
     Args: 
         vector1 (list[float]): a list representing a vector.
         vector2 (list[float]): a list representing a different vector. 
         
     Returns: 
-        sum (float): the sum of the calculation.
+        sum (float): the square root of the sum of the calculation.
         
     Raises: 
         ValueError: If the vectors are not of the same length. 
@@ -20,6 +22,6 @@ def dot_product(vector1: list[float], vector2 : list[float]) -> float :
     
     total = 0 
     for v1, v2 in zip(vector1, vector2): 
-        total += (v1 * v2)
-    return total
+        total += (v1 - v2)**2
+    return math.sqrt(total)
 
