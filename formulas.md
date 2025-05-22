@@ -37,3 +37,9 @@ The body of the method can also be rewritten using a list comprehension in the f
     def euclidean_distance(vector1, vector2): 
         return math.sqrt(sum( x - y) ** 2 for x, y in zip(vector1, vector2))
 ```
+
+## **Lengdenormalisering**
+$$\frac{x}{||x||}$$
+
+**Length of a vector**
+$$||x|| = \sqrt{x \cdot x} = \sqrt{\sum_{i=1}^nx_i^2}$$
