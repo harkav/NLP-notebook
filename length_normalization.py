@@ -9,7 +9,7 @@ def length_normalization(vector: list[float]) -> list[float] :
          
         
     Returns: 
-        total (float): the sum of the calculation.
+        normalized_vector (list[float]): the sum of the calculation.
         
     Raises: 
         ValueError: If it is a zero-length vector. 
