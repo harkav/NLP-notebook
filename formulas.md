@@ -1,6 +1,7 @@
 # Dot product 
 
-$a \cdot b =\sum_{i=0}^{n}(a_ib_i)$
+$a \cdot b =\sum_{i=0}^{n - 1}(a_ib_i)$
+
 
 In other words, for each feature in vector a and b, take the sum of the product of feature i in vector a with feature i in vector b from index 0 to the last index of the vectors. (Where we count index 0 as the first index of a vector.) The algorithm assumes that the vectors are of equal length. 
 

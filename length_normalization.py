@@ -29,4 +29,3 @@ def length_normalization(vector: list[float]) -> list[float] :
     return normalized_vector
 
 
-print(length_normalization([2.3, 2, 3.2]))
