@@ -16,6 +16,8 @@ def dot_product(vector1: list[float], vector2 : list[float]) -> float :
     
     if len(vector1) != len(vector2):
         raise ValueError("Vectors must be of the same length")
+    if len(vector1) == 0: 
+        return 0
         
     
     total = 0 
