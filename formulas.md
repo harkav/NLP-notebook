@@ -1,6 +1,6 @@
 # Dot product 
 
-$a \cdot b =\sum_{i=1}^{n}(a_ib_i)$
+$a \cdot b =\sum_{i=0}^{n}(a_ib_i)$
 
 In other words, for each feature in vector a and b, take the sum of the product of feature i in vector a with feature i in vector b from index 0 to the last index of the vectors. (Where we count index 0 as the first index of a vector.) The algorithm assumes that the vectors are of equal length. 
 
@@ -104,8 +104,44 @@ The body of the method can also be rewritten using a list comprehension in the f
         return math.sqrt(sum( x - y) ** 2 for x, y in zip(vector1, vector2))
 ```
 
-## **Lengdenormalisering**
+## **Length normalization**
 $$\frac{x}{||x||}$$
 
 **Length of a vector**
 $$||x|| = \sqrt{x \cdot x} = \sqrt{\sum_{i=1}^nx_i^2}$$
+
+
+```python
+
+import math
+
+def length_normalization(vector: list[float]) -> list[float] :
+    """
+    A method for normalizing a vector.
+    
+    Args: 
+        vector1 (list[float]): a list representing a vector.
+         
+        
+    Returns: 
+        normalized_vector (list[float]): the sum of the calculation.
+        
+    Raises: 
+        ValueError: If it is a zero-length vector. 
+    """
+    
+ 
+    
+    total = 0
+    for element in vector: 
+        total += element ** 2
+    length = math.sqrt(total)
+    
+    if length == 0: 
+        raise ValueError("cannot normalize a zero-length vector")
+    normalized_vector = [x/ length for x in vector]
+
+    return normalized_vector
+
+
+```
