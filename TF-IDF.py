@@ -68,6 +68,7 @@ def inverse_document_frequency(term: str, documents: list[str]) -> float:
 
 def tf_idf(term, single_document, documents) -> float: 
      
+    # TODO docstring
     return term_frequency(term, single_document) * inverse_document_frequency(term, documents)
 
 
