@@ -63,9 +63,6 @@ Here is an implementation in Python, meant to be readable.
 
 ```
 
-
-
-
 # Euclidean distance 
 
 
