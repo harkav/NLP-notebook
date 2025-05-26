@@ -1,6 +1,8 @@
 import sys
 from tf_idf import pre_process
 import pathlib
+import numpy as np
+from tf_idf import tf_idf
 """
 Project for creating vectors out of a set of document
 
@@ -55,6 +57,20 @@ def get_content_as_string(filename : pathlib.Path) -> str:
          
         
 print(build_word_list_from_input_and_corpus("./test-docs", "test-input.txt"))
+
+
+
+def create_tf_idf(vocab : list[str], doc1: str, doc2: str) -> None: 
+    
+    doc1_vector = np.zeros(len(vocab))
+    doc2_vector = np.zeros(len(vocab))
+    
+    for i in vocab:
+        tf_idf(term= vocab[i], doc1, all_docs)
+        
+    pass 
+    
+    
 
 
 """
