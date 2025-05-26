@@ -1,3 +1,4 @@
+from typing import Generator
 from tf_idf import pre_process
 
 """
@@ -8,7 +9,7 @@ Program for chunking a document
 
 
 
-def yield_chunk(document: str) -> str: 
+def yield_chunk(document: str) -> Generator[str]: 
     
     document_as_list = pre_process(document)
     SLIDING_WINDOW = 25

@@ -16,7 +16,7 @@ def pre_process(document : str) -> list[str]:
     
     return re.findall(r"\b\w+\b", document)
 
-#TODO think about punctuation.
+
 
 def term_frequency(term : str, document: str) -> int:
     """
@@ -62,6 +62,8 @@ def document_frequency(term: str, documents: list[str]) -> int:
             
     return count
 
+#TODO maybe consider doing with the doc frequency during the creation of the chuncks. 
+
 
 def inverse_document_frequency(term: str, documents: list[str]) -> float: 
     """
@@ -76,7 +78,6 @@ def inverse_document_frequency(term: str, documents: list[str]) -> float:
 
     
     """
-    # TODO: think about zero division. 
     
     N = len(documents)
     df = document_frequency(term, documents)
@@ -85,9 +86,9 @@ def inverse_document_frequency(term: str, documents: list[str]) -> float:
     return math.log(N / (1 + df))
 
 
-def tf_idf(term, single_document, documents) -> float: 
+def tf_idf(term: str, single_document: list[str], documents: list[str]) -> float: 
      
-    # TODO docstring
+    #
     """
     Returns term frequency * inverse document frequency.
     
@@ -102,15 +103,3 @@ def tf_idf(term, single_document, documents) -> float:
     return term_frequency(term, single_document) * inverse_document_frequency(term, documents)
 
 
-
-documents = [
-    "The cat sat on the mat.",
-    "The dog sat on the log.",
-    "Dogs and cats are great pets."
-]
-
-print("TF (cat, doc0):", term_frequency("cat", documents[0]))
-print("DF (sat):", document_frequency("sat", documents))
-print("IDF (cat):", inverse_document_frequency("cat", documents))
-print("TF-IDF (cat, doc0):", tf_idf("cat", documents[0], documents))
-print("TF-IDF (dog, doc0):", tf_idf("dog", documents[0], documents))
