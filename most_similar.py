@@ -8,7 +8,7 @@ from nltk.corpus import stopwords
 import nltk
 
 
-nltk.download("punkt")
+#nltk.download("punkt")
 
 
 def tokenize(doc: str) -> list[str]:
@@ -34,27 +34,25 @@ def most_similar(input_document: str, corpus: list[str]) -> tuple[str, float]:
 
     for doc in tokenized_corpus:
         documents.append(
-            create_document_object(
-                corpus, all_words, mapping_reversed, doc
-            )
+            create_document_object(corpus, all_words, mapping_reversed, doc)
         )
 
     input_document_object = create_input_doc(
         tokenized_corpus, input_tokens, all_words, mapping_reversed
     )
 
-    highest = 0
+    highest = -2
     return_str = ""
 
     for doc_object in documents:
-        print(type(doc_object))
-        print(type(input_document_object))
+        
         similarity = cosine_similarity(
             input_document_object.vector.tolist(), doc_object.vector.tolist()
         )
+        print(similarity)
         if similarity > highest:
             highest = similarity
-            return_str = doc.content
+            return_str = doc_object.content
 
     return (return_str, highest)
 
@@ -71,8 +69,6 @@ def create_input_doc(tokenized_corpus, input_tokens, all_words, mapping_reversed
 
 
 def create_document_object(corpus, all_words, mapping_reversed, doc):
-    documents = []
-    
     numpy_arr = np.zeros(len(all_words))
     for token in doc:
         value = tf_idf(token, doc, corpus)
@@ -80,9 +76,7 @@ def create_document_object(corpus, all_words, mapping_reversed, doc):
         if np.count_nonzero(numpy_arr) == 0:
             print("Warning: zero vector for doc:", doc[:50])  # preview
 
-        document = Document(content=doc, vector=numpy_arr)
-        documents.append(document)
-    return documents
+    return Document(content=doc, vector=numpy_arr)
 
 
 def main():
@@ -95,7 +89,7 @@ def main():
 
     with open("./input.txt", "r", encoding="UTF-8") as input_file:
         input_doc = input_file.read()
-        print(input_doc)
+        #print(input_doc)
 
     print(most_similar(input_doc, corpus_list))
 
