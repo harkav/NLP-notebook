@@ -4,7 +4,7 @@ import nltk
 import re
 from nltk.corpus import stopwords
 import matplotlib.pyplot as plt
-
+from wordcloud import WordCloud
 
 nltk.download("punkt")
 nltk.download("stopwords")
@@ -56,6 +56,9 @@ def visualize(counter_dict : Counter) -> None:
     plt.xticks(rotation=45)
     plt.title("Top 15 words")
     plt.savefig("plot.jpg")
+    
+    wordcloud = WordCloud().generate_from_frequencies(counter_dict)
+    wordcloud.to_file("kvakk.jpg")
     
 
 if __name__ == "__main__": 
