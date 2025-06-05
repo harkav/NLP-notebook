@@ -35,7 +35,7 @@ def most_similar(input_document: str, corpus: list[str]) -> tuple[str, float]:
     for doc in tokenized_corpus:
         documents.append(
             create_document_object(
-                input_document, corpus, all_words, mapping_reversed, doc
+                corpus, all_words, mapping_reversed, doc
             )
         )
 
@@ -46,9 +46,11 @@ def most_similar(input_document: str, corpus: list[str]) -> tuple[str, float]:
     highest = 0
     return_str = ""
 
-    for doc in documents:
+    for doc_object in documents:
+        print(type(doc_object))
+        print(type(input_document_object))
         similarity = cosine_similarity(
-            input_document_object.vector.tolist(), doc.vector.tolist()
+            input_document_object.vector.tolist(), doc_object.vector.tolist()
         )
         if similarity > highest:
             highest = similarity
@@ -68,7 +70,9 @@ def create_input_doc(tokenized_corpus, input_tokens, all_words, mapping_reversed
     return Document(content=input_tokens, vector=numpy_arr)
 
 
-def create_document_object(input_document, corpus, all_words, mapping_reversed, doc):
+def create_document_object(corpus, all_words, mapping_reversed, doc):
+    documents = []
+    
     numpy_arr = np.zeros(len(all_words))
     for token in doc:
         value = tf_idf(token, doc, corpus)
@@ -76,7 +80,9 @@ def create_document_object(input_document, corpus, all_words, mapping_reversed, 
         if np.count_nonzero(numpy_arr) == 0:
             print("Warning: zero vector for doc:", doc[:50])  # preview
 
-    return Document(content=doc, vector=numpy_arr)
+        document = Document(content=doc, vector=numpy_arr)
+        documents.append(document)
+    return documents
 
 
 def main():
