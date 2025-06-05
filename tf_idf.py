@@ -18,7 +18,7 @@ def pre_process(document : str) -> list[str]:
 
 
 
-def term_frequency(term : str, document: str) -> int:
+def term_frequency(term : str, document: list[str]) -> int:
     """
     Find term frequency in a document. 
     
@@ -30,7 +30,7 @@ def term_frequency(term : str, document: str) -> int:
         frequency (int): the count of term in document.
 
     """ 
-    words_in_doc = [word.lower() for word in pre_process(document)]
+    words_in_doc = [word.lower() for word in document]
     count = 0
     
     for word in words_in_doc: 
@@ -56,7 +56,7 @@ def document_frequency(term: str, documents: list[str]) -> int:
     """
     count = 0
     for doc in documents: 
-        doc_split = [word.lower() for word in pre_process(doc)]
+        doc_split = [word.lower() for word in doc]
         if term.lower() in doc_split: 
             count += 1
             
@@ -65,7 +65,7 @@ def document_frequency(term: str, documents: list[str]) -> int:
 #TODO maybe consider doing with the doc frequency during the creation of the chuncks. 
 
 
-def inverse_document_frequency(term: str, documents: list[str]) -> float: 
+def inverse_document_frequency(term: str, documents: list[list[str]]) -> float: 
     """
     Finds the inverse document frequency of the term.
     
