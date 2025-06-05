@@ -28,6 +28,8 @@ def main():
         print(k)
 
     
+    visualize(counter_dict)
+    
 def preprocess(text : str) -> str: 
     """
     Removes html-tags from text.
@@ -46,8 +48,15 @@ def preprocess(text : str) -> str:
     return " ".join(words)
 
 
-def visualize(): 
-    pass 
+def visualize(counter_dict : Counter) -> None:
+    most_common = counter_dict.most_common(15)
+    words, freq = zip(*most_common)
+    
+    plt.bar(words, freq)
+    plt.xticks(rotation=45)
+    plt.title("Top 15 words")
+    plt.savefig("plot.jpg")
+    
 
 if __name__ == "__main__": 
     main()
