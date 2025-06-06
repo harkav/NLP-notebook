@@ -89,4 +89,21 @@ def test_tf_idf_validate_input():
         
 
 def test_tf_idf_calculates_correctly(): 
-    pass 
+    assert math.isclose(
+        tf_idf("Kvakk", test_docs[0], test_docs), 
+        0.575359144,
+        rel_tol=1e-5
+        )
+    assert math.isclose(
+        tf_idf("Erna", test_docs[0], test_docs), 
+        0, 
+        rel_tol=1e-5
+        
+    )
+    assert math.isclose(
+        tf_idf("Kvakk", "Kvakk", ["kvakk", "kvakk"]), 
+        -0.405465108 * 1,
+        rel_tol=1e-5
+        
+    )
+    
