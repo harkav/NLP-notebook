@@ -1,22 +1,5 @@
 import math
-import re 
 from nltk.tokenize import word_tokenize
-
-
-
-def pre_process(document : str) -> list[str]:
-    """
-    Separates words from puncts.
-    
-    Args: 
-        document (str): the document.
-        
-    Returns: 
-        document_as_list (list[str]): the document as a list 
-    
-    """ 
-    
-    return re.findall(r"\b\w+\b", document)
 
 
 
@@ -69,10 +52,9 @@ def document_frequency(term: str, documents: list[str]) -> int:
             
     return count
 
-#TODO maybe consider doing with the doc frequency during the creation of the chuncks. 
 
 
-def inverse_document_frequency(term: str, documents: list[list[str]]) -> float: 
+def inverse_document_frequency(term: str, documents: list[str]) -> float: 
     """
     Finds the inverse document frequency of the term.
     
@@ -85,6 +67,11 @@ def inverse_document_frequency(term: str, documents: list[list[str]]) -> float:
 
     
     """
+    assert isinstance(term, str)
+    assert isinstance(documents, list)
+    assert len(documents) > 0
+    assert isinstance(documents[0], str)
+    
     
     N = len(documents)
     df = document_frequency(term, documents)
