@@ -18,6 +18,8 @@ def cosine_similarity(vector1: list[float], vector2 : list[float]) -> float :
     
     if len(vector1) != len(vector2):
         raise ValueError("Vectors must be of the same length")
+    if all(v == 0 for v in vector1) or all(v == 0 for v in vector2): 
+        return 0.0
         
     
     vector1_normalized = length_normalization(vector1)
