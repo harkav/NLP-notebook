@@ -7,6 +7,8 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 
 
+# TODO think about optimalizations, plenty of room for improvements
+
 def tokenize(doc: str) -> list[str]:
     return [word.lower() for word in word_tokenize(doc) if word.isalnum()]
 
