@@ -1,5 +1,7 @@
 import math
 import re 
+from nltk.tokenize import word_tokenize
+
 
 
 def pre_process(document : str) -> list[str]:
@@ -18,7 +20,7 @@ def pre_process(document : str) -> list[str]:
 
 
 
-def term_frequency(term : str, document: list[str]) -> int:
+def term_frequency(term : str, document: str) -> int:
     """
     Find term frequency in a document. 
     
@@ -30,7 +32,8 @@ def term_frequency(term : str, document: list[str]) -> int:
         frequency (int): the count of term in document.
 
     """ 
-    words_in_doc = [word.lower() for word in document]
+    assert isinstance(document, str)
+    words_in_doc = tokenize(document)
     count = 0
     
     for word in words_in_doc: 
@@ -54,10 +57,14 @@ def document_frequency(term: str, documents: list[str]) -> int:
         Frequency (int): the num of occurrences of term in the documents.
     
     """
+    assert isinstance(documents, list)
+    assert len(documents) > 0
+    assert isinstance(documents[0], str)
     count = 0
     for doc in documents: 
-        doc_split = [word.lower() for word in doc]
-        if term.lower() in doc_split: 
+        tokenized = word_tokenize(doc)
+        tokenized = [word.lower() for word in tokenized]
+        if term.lower() in tokenized: 
             count += 1
             
     return count
@@ -86,7 +93,7 @@ def inverse_document_frequency(term: str, documents: list[list[str]]) -> float:
     return math.log(N / (1 + df))
 
 
-def tf_idf(term: str, single_document: list[str], documents: list[str]) -> float: 
+def tf_idf(term: str, single_document: str, documents: list[str]) -> float: 
      
     #
     """
@@ -99,7 +106,20 @@ def tf_idf(term: str, single_document: list[str], documents: list[str]) -> float
         
     Returns: 
         tf-idf (float): the tf-idf based on the input.
+        
+        
     """
+    
+    assert isinstance(term, str)
+    assert isinstance(single_document, str)
+    assert isinstance(documents, list)
+    assert len(documents) > 0    
+    assert isinstance(documents[0], str)
+   
+    
     return term_frequency(term, single_document) * inverse_document_frequency(term, documents)
 
+
+def tokenize(doc: str) -> list[str]:
+    return [word.lower() for word in word_tokenize(doc) if word.isalnum()]
 
