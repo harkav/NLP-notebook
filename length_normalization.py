@@ -3,6 +3,7 @@ import math
 def length_normalization(vector: list[float]) -> list[float] :
     """
     A method for normalizing a vector.
+    Tested to a precision of 1 * 10⁻².
     
     Args: 
         vector1 (list[float]): a list representing a vector.

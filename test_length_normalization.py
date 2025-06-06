@@ -61,3 +61,5 @@ def test_proper_calculation_length_normalization():
         rel_tol=1e-2
     ), print(result[2])
     
+    # not too pleased with the precision of the calculation here, either with the code or with my manual calc. 
+    # it's probably the latter which is off. 
