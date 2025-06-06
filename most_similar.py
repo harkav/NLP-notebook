@@ -5,10 +5,6 @@ from tf_idf import tf_idf
 from pathlib import Path
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
-import nltk
-
-
-#nltk.download("punkt")
 
 
 def tokenize(doc: str) -> list[str]:
@@ -23,7 +19,9 @@ class Document(NamedTuple):
 def most_similar(input_document: str, corpus: list[str]) -> tuple[str, float]:
     # create wordlist
 
-    tokenized_corpus = [tokenize(c) for c in corpus]
+    tokenized_corpus = [tokenize(doc) for doc in corpus]
+    print(tokenized_corpus)
+    tokenized_as_str = corpus 
     input_tokens = tokenize(input_document)
     all_docs = tokenized_corpus
     all_words = {word for doc in all_docs for word in doc}
@@ -38,7 +36,7 @@ def most_similar(input_document: str, corpus: list[str]) -> tuple[str, float]:
         )
 
     input_document_object = create_input_doc(
-        tokenized_corpus, input_tokens, all_words, mapping_reversed
+        tokenized_as_str, input_tokens, all_words, mapping_reversed
     )
 
     highest = -2
@@ -57,11 +55,12 @@ def most_similar(input_document: str, corpus: list[str]) -> tuple[str, float]:
     return (return_str, highest)
 
 
-def create_input_doc(tokenized_corpus, input_tokens, all_words, mapping_reversed):
+def create_input_doc(tokenized_corpus_as_str, input_tokens, all_words, mapping_reversed):
+    input_tokens_as_str = " ".join(input_tokens)
     numpy_arr = np.zeros(len(all_words))
     for token in input_tokens:
         if token in mapping_reversed:
-            value = tf_idf(token, input_tokens, tokenized_corpus)
+            value = tf_idf(token, input_tokens_as_str, tokenized_corpus_as_str)
             numpy_arr[mapping_reversed.get(token)] = value
     if np.count_nonzero(numpy_arr) == 0:
         print("Warning: zero vector for doc:", input_tokens[:50])  # preview
@@ -69,9 +68,10 @@ def create_input_doc(tokenized_corpus, input_tokens, all_words, mapping_reversed
 
 
 def create_document_object(corpus, all_words, mapping_reversed, doc):
+    
     numpy_arr = np.zeros(len(all_words))
     for token in doc:
-        value = tf_idf(token, doc, corpus)
+        value = tf_idf(token, " ".join(doc), corpus)
         numpy_arr[mapping_reversed.get(token)] = value
         if np.count_nonzero(numpy_arr) == 0:
             print("Warning: zero vector for doc:", doc[:50])  # preview
