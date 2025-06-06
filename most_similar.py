@@ -7,7 +7,11 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 
 
-# TODO think about optimalizations, plenty of room for improvements
+# TODO think about optimalizations, plenty of room for improvements, are you doing something several times, rather than once? 
+# TODO think about the logic for files and validation. 
+# TODO write some doc strings, perhaps rewrite a lot, there was a lot of hate-coding whilst making this. 
+
+
 
 def tokenize(doc: str) -> list[str]:
     return [word.lower() for word in word_tokenize(doc) if word.isalnum()]
