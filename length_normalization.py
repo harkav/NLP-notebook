@@ -12,10 +12,12 @@ def length_normalization(vector: list[float]) -> list[float] :
         normalized_vector (list[float]): the sum of the calculation.
         
     Raises: 
-        ValueError: If it is a zero-length vector. 
+        ValueError: If it is an empty vector (like []) 
     """
     
  
+    if not vector: 
+        raise ValueError("Cannot normalize an empty vector ([])")
     
     total = 0
     for element in vector: 
@@ -23,7 +25,7 @@ def length_normalization(vector: list[float]) -> list[float] :
     length = math.sqrt(total)
     
     if length == 0: 
-        raise ValueError("cannot normalize a zero-length vector")
+        return vector
     normalized_vector = [x/ length for x in vector]
 
     return normalized_vector
