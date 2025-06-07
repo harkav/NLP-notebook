@@ -1,7 +1,7 @@
 from typing import NamedTuple
 import numpy as np
-from .utils.cosine_similarity import cosine_similarity
-from .utils.tf_idf import tf_idf
+from utils.cosine_similarity import cosine_similarity
+from utils.tf_idf import tf_idf
 from pathlib import Path
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
@@ -92,6 +92,48 @@ def create_document_object(corpus, all_words, mapping_reversed, doc):
 
     return Document(content=doc, vector=numpy_arr)
 
+def validate_files(dir_path : str, input_path : str) -> None: 
+    """
+    Validates the corpus directory and the input file.
+    
+    Args: 
+        dir_path (str): the path to the corpus directory as a str.
+        input_path (str): the path to the input file.
+        
+    Raises: 
+        NotADirectoryError if the dir_path is not a directory.
+        ValueError either if all the corpus files are empty or the input file is empty.
+        FileNotFoundError if the input_path is not a path to a file.
+    """    
+   
+    dir_path_object = Path(dir_path)
+    input_path_object = Path(input_path)
+
+    if not dir_path_object.is_dir(): 
+        raise NotADirectoryError(f"Directory {dir_path_object} does not exist or is not a directory")
+    
+    files = [] 
+    for file in dir_path_object.iterdir(): 
+        files.append(check_for_empty_file(file))
+     
+    # should check if there is at least one non-empty file    
+    if not any(files): 
+        raise ValueError("All the files in the directory are empty")
+    
+    if not input_path_object.is_file(): 
+        raise FileNotFoundError(f"Input file {input_path} is not a file or could not be found")
+    
+    if not check_for_empty_file(input_path_object): 
+        raise ValueError("Cannot check an empty file")
+    
+    return True         
+            
+
+def check_for_empty_file(file_path: Path):
+    """ Returns True if the size of the file is > 0, False otherwise"""
+    return file_path.stat().st_size > 0
+
+  
 
 def main():
     path = Path("./test-docs/")
