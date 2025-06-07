@@ -1,19 +1,24 @@
+def most_similar(input_document: str, corpus: list[str]) -> tuple[str, float]:
+    all_words, term_index_dict, idf_vector = create_tf_idf_context(corpus)
 
+    corpus_document_objects = []
 
-docs = ["kvakk jeg heter Harald", "dette er en hund", "dette er en øl"]
+    for doc in corpus:
+        corpus_document_objects.append(
+            create_object_new(doc, all_words, term_index_dict, idf_vector)
+        )
 
-all_words = {word for doc in docs for word in doc.split()}
+    input_doc = create_object_new(
+        input_document, all_words, term_index_dict, idf_vector
+    )
 
+    highest = ("", -2)
 
-dic = {}
+    for corp_doc in corpus_document_objects:
+        similarity = cosine_similarity(corp_doc.vector, input_doc.vector)
+        print(similarity)
+        print(corp_doc.content)
+        if similarity > highest[1]:
+            highest = (corp_doc.content, similarity)
 
-for word in all_words:
-    count = 0
-    for doc in docs: 
-        if word in doc.split(): 
-            if word not in dic.keys(): 
-                count += 1
-    dic[word] = count        
-                
-print(all_words)
-print(dic)
+    return highest

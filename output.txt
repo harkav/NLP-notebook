@@ -1,0 +1,29 @@
+Most similar doc: Machine learning and artificial intelligence are transforming technology and society. Algorithms, data, and models power AI development.
+
+Similarity score: 0.7338
+=== Input document top TF-IDF terms ===
+
+Top TF-IDF terms:
+     technology: 0.4055
+         models: 0.4055
+        machine: 0.4055
+           data: 0.4055
+   intelligence: 0.4055
+       learning: 0.4055
+     artificial: 0.4055
+        society: 0.0000
+        recipes: 0.0000
+         onions: 0.0000
+=== Most similar document top TF-IDF terms ===
+
+Top TF-IDF terms:
+   transforming: 0.4055
+     technology: 0.4055
+        society: 0.4055
+          power: 0.4055
+         models: 0.4055
+     algorithms: 0.4055
+     artificial: 0.4055
+             ai: 0.4055
+   intelligence: 0.4055
+       learning: 0.4055

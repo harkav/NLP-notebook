@@ -5,12 +5,16 @@ from pathlib import Path
 from nltk.tokenize import word_tokenize
 import sys
 from dataclasses import dataclass
+from nltk.corpus import stopwords
+from collections import Counter
 
 
 # TODO think about optimalizations, plenty of room for improvements, are you doing something several times, rather than once?
 # TODO think about the logic for files and validation.
 # TODO write some doc strings, perhaps rewrite a lot, there was a lot of hate-coding whilst making this.
 
+
+STOPWORDS = set(stopwords.words("english"))
 
 @dataclass(frozen=True)
 class Document:
@@ -29,7 +33,7 @@ def tokenize(doc: str) -> list[str]:
     Returns:
         list[str]: the tokenized doc as a list of str.
     """
-    return [word.lower() for word in word_tokenize(doc) if word.isalnum()]
+    return [word.lower() for word in word_tokenize(doc) if word.isalnum() and word.lower() not in STOPWORDS]
 
 
 def create_tf_idf_context(corpus: list[str]):
@@ -48,25 +52,26 @@ def create_tf_idf_context(corpus: list[str]):
     idf_vector = np.zeros(len(all_words))
 
     for term, idx in term_index_dict.items():
-        idf_vector[idx] = math.log(N /1 +  df[term])
+        idf_vector[idx] = math.log(N /(1 +  df[term]))
 
     # Return what We've made as a tuple
     return (all_words, term_index_dict, idf_vector)
 
 
-def create_object_new(doc: str, all_words: set, term_index_dict: dict, idf_vector: np):
+
+
+def create_object_new(doc: str, all_words: set, term_index_dict: dict, idf_vector: np.ndarray):
     vector = np.zeros(len(all_words))
     tokenized = tokenize(doc)
-    for word in tokenized:
-        term_frequency = get_term_frequency(word, tokenized)
+    tf_counter = Counter(tokenized)
+    for word, tf in tf_counter.items():
         term_index = term_index_dict.get(word)
-
-        vector[term_index] = term_frequency * idf_vector[term_index]
-
+        if term_index is not None:
+            vector[term_index] = tf * idf_vector[term_index]
     return Document(content=doc, vector=vector)
 
 
-def get_term_frequency(term: str, doc: str) -> int:
+def get_term_frequency(term: str, doc: list[str]) -> int:
     return doc.count(term)
 
 
@@ -87,39 +92,43 @@ def create_document_frequency_dict(all_words: set, corpus: list[str]) -> dict[st
     for word in all_words:
         count = 0
         for doc in corpus:
-            if word in doc.split():
+            if word in tokenize(doc):
                 count += 1
         df[word] = count
     return df
 
 
-def most_similar(input_document: str, corpus: list[str]) -> tuple[str, float]:
+def most_similar(input_document: str, corpus: list[str]) -> tuple[str, float, Document, dict, dict, np.ndarray]:
     all_words, term_index_dict, idf_vector = create_tf_idf_context(corpus)
 
-    corpus_document_objects = []
+    corpus_document_objects = [
+        create_object_new(doc, all_words, term_index_dict, idf_vector) for doc in corpus
+    ]
 
-    for doc in corpus:
-        corpus_document_objects.append(
-            create_object_new(doc, all_words, term_index_dict, idf_vector)
-        )
-
-    input_doc = create_object_new(
-        input_document, all_words, term_index_dict, idf_vector
-    )
+    input_doc = create_object_new(input_document, all_words, term_index_dict, idf_vector)
 
     highest = ("", -2)
+    most_similar_doc_obj = None
 
     for corp_doc in corpus_document_objects:
         similarity = cosine_similarity(corp_doc.vector, input_doc.vector)
-        print(similarity)
-        print(corp_doc)
+        # print(similarity)
+        # print(corp_doc.content)
         if similarity > highest[1]:
             highest = (corp_doc.content, similarity)
+            most_similar_doc_obj = corp_doc
 
-    return highest
+    return highest[0], highest[1], input_doc, most_similar_doc_obj, term_index_dict
 
     # eturn (all_words, term_index_dict, idf_vector)
+    
 
+def print_top_tfidf(doc, term_index_dict, top_n=10):
+    index_term = {i: term for term, i in term_index_dict.items()}
+    sorted_indices = np.argsort(doc.vector)[::-1]
+    print("\nTop TF-IDF terms:")
+    for i in sorted_indices[:top_n]:
+        print(f"{index_term[i]:>15}: {doc.vector[i]:.4f}")
 
 def validate_files(dir_path: str, input_path: str) -> None:
     """
@@ -176,17 +185,21 @@ def main():
     validate_files(dir_path, input_file_path)
 
     dir_path = Path(dir_path)
-    corpus_list = []
-
-    for p in dir_path.iterdir():
-        corpus_list.append(p.read_text("UTF-8"))
+    corpus_list = [p.read_text("UTF-8") for p in dir_path.iterdir()]
 
     with open(input_file_path, "r", encoding="UTF-8") as input_file:
-        input_doc = input_file.read()
+        input_doc_text = input_file.read()
 
-    result = most_similar(input_doc, corpus_list)
-    print(f"Most similar doc: {result[0]}")
-    print(f"Similarity score: {result[1]:.4f}")
+    most_similar_doc_content, similarity, input_doc, most_similar_doc, term_index_dict = most_similar(input_doc_text, corpus_list)
+
+    print(f"Most similar doc: {most_similar_doc_content}")
+    print(f"Similarity score: {similarity:.4f}")
+
+    print("=== Input document top TF-IDF terms ===")
+    print_top_tfidf(input_doc, term_index_dict)
+
+    print("=== Most similar document top TF-IDF terms ===")
+    print_top_tfidf(most_similar_doc, term_index_dict)
 
 if __name__ == "__main__":
     main()
