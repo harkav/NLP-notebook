@@ -1,7 +1,7 @@
 from typing import NamedTuple
 import numpy as np
-from cosine_similarity import cosine_similarity
-from tf_idf import tf_idf
+from .utils.cosine_similarity import cosine_similarity
+from .utils.tf_idf import tf_idf
 from pathlib import Path
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
@@ -14,6 +14,14 @@ from nltk.corpus import stopwords
 
 
 def tokenize(doc: str) -> list[str]:
+    """ Wrapper method for nltk.tokenize
+    
+        Args: 
+            doc (str) : a document represented as a str.
+            
+        Returns: 
+            list[str]: the tokenized doc as a list of str.
+    """
     return [word.lower() for word in word_tokenize(doc) if word.isalnum()]
 
 
