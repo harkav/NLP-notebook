@@ -17,7 +17,7 @@ def length_normalization(vector: list[float]) -> list[float] :
     """
     
  
-    if not vector: 
+    if not len(vector) > 0: 
         raise ValueError("Cannot normalize an empty vector ([])")
     
     total = 0

@@ -1,13 +1,10 @@
 import math
-from typing import NamedTuple
 import numpy as np
 from utils.cosine_similarity import cosine_similarity
-from utils.tf_idf import tf_idf, document_frequency
 from pathlib import Path
 from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
 import sys
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 
 # TODO think about optimalizations, plenty of room for improvements, are you doing something several times, rather than once?
@@ -51,34 +48,26 @@ def create_tf_idf_context(corpus: list[str]):
     idf_vector = np.zeros(len(all_words))
 
     for term, idx in term_index_dict.items():
-        idf_vector[idx] = math.log(N / df[term])
+        idf_vector[idx] = math.log(N /1 +  df[term])
 
-    
-    # Return what We've made as a tuple 
+    # Return what We've made as a tuple
     return (all_words, term_index_dict, idf_vector)
+
 
 def create_object_new(doc: str, all_words: set, term_index_dict: dict, idf_vector: np):
     vector = np.zeros(len(all_words))
     tokenized = tokenize(doc)
     for word in tokenized:
         term_frequency = get_term_frequency(word, tokenized)
-        term_index = term_index_dict[word]
+        term_index = term_index_dict.get(word)
 
         vector[term_index] = term_frequency * idf_vector[term_index]
-        
-        return Document(content=doc, vector=vector)
-    
-        
-        
-        
+
+    return Document(content=doc, vector=vector)
 
 
 def get_term_frequency(term: str, doc: str) -> int:
-    for d in doc:
-        counter = 0
-        if term == d:
-            counter += 1
-    return counter
+    return doc.count(term)
 
 
 def create_document_frequency_dict(all_words: set, corpus: list[str]) -> dict[str, int]:
@@ -106,15 +95,31 @@ def create_document_frequency_dict(all_words: set, corpus: list[str]) -> dict[st
 
 def most_similar(input_document: str, corpus: list[str]) -> tuple[str, float]:
     all_words, term_index_dict, idf_vector = create_tf_idf_context(corpus)
-    
-    corpus_document_objects = [] 
-    
-    for doc in corpus: 
-        corpus_document_objects.append(create_object_new(doc, all_words, term_index_dict, idf_vector))
-        
-    input_doc = create_object_new(input_document, all_words, term_index_dict, idf_vector)
-    
+
+    corpus_document_objects = []
+
+    for doc in corpus:
+        corpus_document_objects.append(
+            create_object_new(doc, all_words, term_index_dict, idf_vector)
+        )
+
+    input_doc = create_object_new(
+        input_document, all_words, term_index_dict, idf_vector
+    )
+
+    highest = ("", -2)
+
+    for corp_doc in corpus_document_objects:
+        similarity = cosine_similarity(corp_doc.vector, input_doc.vector)
+        print(similarity)
+        print(corp_doc)
+        if similarity > highest[1]:
+            highest = (corp_doc.content, similarity)
+
+    return highest
+
     # eturn (all_words, term_index_dict, idf_vector)
+
 
 def validate_files(dir_path: str, input_path: str) -> None:
     """
@@ -179,8 +184,9 @@ def main():
     with open(input_file_path, "r", encoding="UTF-8") as input_file:
         input_doc = input_file.read()
 
-    print(most_similar(input_doc, corpus_list))
-
+    result = most_similar(input_doc, corpus_list)
+    print(f"Most similar doc: {result[0]}")
+    print(f"Similarity score: {result[1]:.4f}")
 
 if __name__ == "__main__":
     main()
