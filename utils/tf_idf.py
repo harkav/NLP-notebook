@@ -108,5 +108,13 @@ def tf_idf(term: str, single_document: str, documents: list[str]) -> float:
 
 
 def tokenize(doc: str) -> list[str]:
+    """
+    Wrapper for nltk.word_tokenize
+    
+    Args: 
+        doc (str): a document as a str.
+    Returns: 
+        the doc as list[str]
+    """
     return [word.lower() for word in word_tokenize(doc) if word.isalnum()]
 
