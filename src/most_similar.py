@@ -8,11 +8,6 @@ from dataclasses import dataclass
 from collections import Counter
 
 
-# TODO think about optimalizations, plenty of room for improvements, are you doing something several times, rather than once?
-# TODO think about the logic for files and validation.
-# TODO write some doc strings, perhaps rewrite a lot, there was a lot of hate-coding whilst making this.
-
-
 
 @dataclass(frozen=True)
 class Document:
@@ -24,6 +19,22 @@ class Document:
 
 
 def create_tf_idf_context(corpus: list[str]) -> tuple[set[str], dict[str, int], np.ndarray]:
+    """
+    Creates the context needed for calculating TF-IDFs. 
+    
+    
+    Tests run, tests/create_document_frequency_dict
+    
+    Args: 
+        corpus (list[str]): all the corpus that the model will be built on.
+    
+    Returns: 
+        all_words (set[str]): the set of all words in corpus.
+        term_index_dict (dict[str, int]): a dict that maps term to an index that should be the same in the idf-np.ndarray.
+        idf_vector (np.ndarray): the idf vectors. 
+    
+    """
+    
     # Get the set of all words in corpus
     all_words = {word for doc in corpus for word in tokenize(doc)}
 
@@ -62,6 +73,8 @@ def create_object_new(doc: str, all_words: set, term_index_dict: dict, idf_vecto
 def create_document_frequency_dict(all_words: set, corpus: list[str]) -> dict[str, int]:
     """
     Readable method for finding the document frequencies of a corpus.
+    
+    Tests run, tests/test_create_document_frequency_dict
 
     Args:
         all_words (set): the set of all words in the corpus.
@@ -82,7 +95,23 @@ def create_document_frequency_dict(all_words: set, corpus: list[str]) -> dict[st
     return df
 
 
-def most_similar(input_document: str, corpus: list[str]) -> tuple[str, float, Document, dict, dict, np.ndarray]:
+def most_similar(input_document: str, corpus: list[str]) -> tuple[str, float, Document, Document, dict[str, int]]:
+    """
+    Does the comparison, create Document objects based on the corpus. 
+    
+    Args: 
+        input_document (str): the document that will be compared against the corpus.
+        corpust (list[str]): the corpus.
+        
+    Returns: 
+        tuple[str, float, Document, Document, dict[str, str]]:
+            str : text content of most similar doc
+            float: similarity score of the most similar doc
+            Document: the Document object created from the input document.
+            Document: the Document object created from the most similar doc in corpus.
+            
+    """
+    
     all_words, term_index_dict, idf_vector = create_tf_idf_context(corpus)
 
     corpus_document_objects = [
@@ -96,8 +125,6 @@ def most_similar(input_document: str, corpus: list[str]) -> tuple[str, float, Do
 
     for corp_doc in corpus_document_objects:
         similarity = cosine_similarity(corp_doc.vector, input_doc.vector)
-        # print(similarity)
-        # print(corp_doc.content)
         if similarity > highest[1]:
             highest = (corp_doc.content, similarity)
             most_similar_doc_obj = corp_doc
@@ -108,6 +135,8 @@ def most_similar(input_document: str, corpus: list[str]) -> tuple[str, float, Do
     
 
 def print_top_tfidf(doc, term_index_dict, top_n=10):
+    """ Chatgpt wrote this whilst troubleshooting, not sure whether I should keep it"""
+    
     index_term = {i: term for term, i in term_index_dict.items()}
     sorted_indices = np.argsort(doc.vector)[::-1]
     print("\nTop TF-IDF terms:")
@@ -117,6 +146,8 @@ def print_top_tfidf(doc, term_index_dict, top_n=10):
 def validate_files(dir_path: str, input_path: str) -> None:
     """
     Validates the corpus directory and the input file.
+    
+    Tests run, tests/test_validate_files
 
     Args:
         dir_path (str): the path to the corpus directory as a str.
@@ -155,8 +186,15 @@ def validate_files(dir_path: str, input_path: str) -> None:
     return True
 
 
-def check_for_empty_file(file_path: Path):
-    """Returns True if the size of the file is > 0, False otherwise"""
+def check_for_empty_file(file_path: Path) -> bool:
+    """Returns True if the size of the file is > 0, False otherwise
+    
+    Args:
+        file_path (Path): a path to a file.
+        
+    Returns: 
+        bool. 
+    """
     return file_path.stat().st_size > 0
 
 
