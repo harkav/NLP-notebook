@@ -2,6 +2,11 @@ import math
 from nltk.tokenize import word_tokenize
 
 
+"""
+TF-IDF, naive implementaiton
+
+"""
+
 
 def term_frequency(term : str, document: str) -> int:
     """
