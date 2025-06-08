@@ -28,7 +28,6 @@ def cosine_similarity(vector1: list[float], vector2 : list[float]) -> float :
     
     vector1_normalized = length_normalization(vector1)
     vector2_normalized = length_normalization(vector2)
+    result = dot_product(vector1_normalized, vector2_normalized)
     
-    return dot_product(vector1_normalized, vector2_normalized)
-
-
+    return round(result, ndigits= 7) 

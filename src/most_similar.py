@@ -1,11 +1,10 @@
 import math
 import numpy as np
 from utils.cosine_similarity import cosine_similarity
+from utils.tokenize import tokenize
 from pathlib import Path
-from nltk.tokenize import word_tokenize
 import sys
 from dataclasses import dataclass
-from nltk.corpus import stopwords
 from collections import Counter
 
 
@@ -14,7 +13,6 @@ from collections import Counter
 # TODO write some doc strings, perhaps rewrite a lot, there was a lot of hate-coding whilst making this.
 
 
-STOPWORDS = set(stopwords.words("english"))
 
 @dataclass(frozen=True)
 class Document:
@@ -24,19 +22,8 @@ class Document:
     vector: np.ndarray
 
 
-def tokenize(doc: str) -> list[str]:
-    """Wrapper method for nltk.tokenize
 
-    Args:
-        doc (str) : a document represented as a str.
-
-    Returns:
-        list[str]: the tokenized doc as a list of str.
-    """
-    return [word.lower() for word in word_tokenize(doc) if word.isalnum() and word.lower() not in STOPWORDS]
-
-
-def create_tf_idf_context(corpus: list[str]):
+def create_tf_idf_context(corpus: list[str]) -> tuple[set[str], dict[str, int], np.ndarray]:
     # Get the set of all words in corpus
     all_words = {word for doc in corpus for word in tokenize(doc)}
 
@@ -70,9 +57,6 @@ def create_object_new(doc: str, all_words: set, term_index_dict: dict, idf_vecto
             vector[term_index] = tf * idf_vector[term_index]
     return Document(content=doc, vector=vector)
 
-
-def get_term_frequency(term: str, doc: list[str]) -> int:
-    return doc.count(term)
 
 
 def create_document_frequency_dict(all_words: set, corpus: list[str]) -> dict[str, int]:
