@@ -58,7 +58,20 @@ def create_tf_idf_context(corpus: list[str]) -> tuple[set[str], dict[str, int], 
 
 
 
-def create_object_new(doc: str, all_words: set, term_index_dict: dict, idf_vector: np.ndarray):
+def create_object_new(doc: str, all_words: set[str], term_index_dict: dict[str, int], idf_vector: np.ndarray) -> Document:
+    """
+    Create Document objects from the tf-idf context.
+    
+    Args: 
+        doc (str): a text document as a str.
+        all_words (set[str]): all the words of the corpus.
+        term_index_dict (dict[str, int]): a dict mapping term to an index that is shared with the np.ndarray
+        idf_vector (np.ndarray): a numpy array representing the idf-vector for the corpus.
+    
+    Returns: 
+        Document : the Document object that has been generated.
+    """
+    
     vector = np.zeros(len(all_words))
     tokenized = tokenize(doc)
     tf_counter = Counter(tokenized)
@@ -70,7 +83,7 @@ def create_object_new(doc: str, all_words: set, term_index_dict: dict, idf_vecto
 
 
 
-def create_document_frequency_dict(all_words: set, corpus: list[str]) -> dict[str, int]:
+def create_document_frequency_dict(all_words: set[str], corpus: list[str]) -> dict[str, int]:
     """
     Readable method for finding the document frequencies of a corpus.
     
