@@ -98,11 +98,16 @@ def create_document_frequency_dict(all_words: set[str], corpus: list[str]) -> di
     """
 
     df = {}
+    
+    tokenized_corpus = []
+    
+    for doc in corpus: 
+        tokenized_corpus.append(tokenize(doc))
 
     for word in all_words:
         count = 0
-        for doc in corpus:
-            if word in tokenize(doc):
+        for d in tokenized_corpus:
+            if word in d:
                 count += 1
         df[word] = count
     return df
