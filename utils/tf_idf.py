@@ -1,125 +1,95 @@
 import math
-from nltk.tokenize import word_tokenize
+import numpy as np
+import spacy
 
 
-"""
-TF-IDF, naive implementaiton
 
-"""
+nlp = spacy.load("en_core_web_sm")
 
 
-def term_frequency(term : str, document: str) -> int:
-    """
-    Find term frequency in a document. 
+def tokenize(document: str) -> list[str]:
+    """Tokenize a doc using spacy, leave stop words"""
+    doc = nlp(document)
+    processed = [
+        token.text.lower() for token in doc if token.is_alpha]
+    return processed
+
+
+
+
+
+def document_frequency(all_words : set[str], corpus: list[list[str]]) -> dict[str, int]:
+    df_dict = {}
+    print(all_words)
+
     
-    Args: 
-        term (str): the term in question.
-        document (str): the document, represented as a str.
+    # tokenize docs
+    tokenized_all_docs = [] 
+    for doc in corpus: 
+        #extract doc as str
+        doc = doc[0]
         
-    Returns:
-        frequency (int): the count of term in document.
-
-    """ 
-    assert isinstance(document, str)
-    words_in_doc = tokenize(document)
-    count = 0
-    
-    for word in words_in_doc: 
-        if word == term.lower():
-            count += 1
-    return count
-    
-    
-    
-
-
-def document_frequency(term: str, documents: list[str]) -> int: 
-    """
-    Find the num of docs that contains the term. 
-    
-    Args: 
-        term (str): the term.
-        documents (list[str]): the documents of the corpus.
+        print(doc)
+        print(type(doc))
+        tokens = [word for word in tokenize(doc)]
+        tokenized_all_docs.append(tokens)
         
-    Returns: 
-        Frequency (int): the num of occurrences of term in the documents.
     
-    """
-    assert isinstance(documents, list)
-    assert len(documents) > 0
-    assert isinstance(documents[0], str)
-    count = 0
-    for doc in documents: 
-        tokenized = word_tokenize(doc)
-        tokenized = [word.lower() for word in tokenized]
-        if term.lower() in tokenized: 
-            count += 1
+    # count df 
+
+    for term in all_words:
+        counter = 0
+        for doc in tokenized_all_docs: 
+            if term in doc: 
+                counter += 1
+        df_dict[term] = counter  
+        
+    print(df_dict)
             
-    return count
-
-
-
-def inverse_document_frequency(term: str, documents: list[str]) -> float: 
-    """
-    Finds the inverse document frequency of the term.
-    
-    Args: 
-        term (str): the term.
-        documents (list[str]): the documents.
+            
         
-    Returns:
-        The inverse document frequency of the term.
+    return df_dict
 
-    
-    """
-    assert isinstance(term, str)
-    assert isinstance(documents, list)
-    assert len(documents) > 0
-    assert isinstance(documents[0], str)
-    
-    
-    N = len(documents)
-    df = document_frequency(term, documents)
-    
-    
-    return math.log(N / (1 + df))
+def term_frequency(term: str, doc: list[str]) -> int:
+    return doc.count(term)
 
+def create_tf_idf_context(corpus: list[list[str]]) -> tuple[dict[str, int], list[float]]:
+    all_words = {word 
+                 for doc in corpus 
+                 for sentence in doc
+                for word in tokenize(sentence)
+                }
 
-def tf_idf(term: str, single_document: str, documents: list[str]) -> float: 
-     
-    #
-    """
-    Returns term frequency * inverse document frequency.
+  
     
-    Args: 
-        term (str): the term you're trying to find the tf-idf for.
-        single_document (str): the document you're trying to find the tf-idf for.
-        documents (list[str]): the whole corpus.
-        
-    Returns: 
-        tf-idf (float): the tf-idf based on the input.
-        
-        
-    """
-    
-    assert isinstance(term, str)
-    assert isinstance(single_document, str)
-    assert isinstance(documents, list)
-    assert len(documents) > 0    
-    assert isinstance(documents[0], str)
-   
-    
-    return term_frequency(term, single_document) * inverse_document_frequency(term, documents)
+    df_dict = document_frequency(all_words, corpus)
+    term_index_mapping = {term: idx for idx, term in enumerate(sorted(all_words))}  # ✅ Sort terms
+    idf_vector = np.zeros(len(all_words))
+    N = len(corpus)
+    for term, idx in term_index_mapping.items():
+        idf_vector[idx] = math.log(N / (1 + df_dict.get(term, 0)))
+    return term_index_mapping, idf_vector
+
+def tf_idf_2(term_index_mapping: dict[str, int], document: list[str], idf_vector: np.ndarray) -> np.ndarray:
+    tfidf_vector = np.zeros(len(idf_vector))
+    for word in document:
+        if word in term_index_mapping:
+            idx = term_index_mapping[word]
+            tf = term_frequency(word, document)
+            tfidf_vector[idx] = tf * idf_vector[idx]
+    return tfidf_vector
+
+# ----------- Example Usage -----------
 
 
-def tokenize(doc: str) -> list[str]:
-    """
-    Wrapper for nltk.word_tokenize
-    
-    Args: 
-        doc (str): a document as a str.
-    Returns: 
-        the doc as list[str]
-    """
-    return [word.lower() for word in word_tokenize(doc) if word.isalnum()]
+corpus = [["The cat sat on the mat"], 
+        ["The duck is not happy"], 
+        ["The cat and dog are friends"]]
+
+
+term_index_mapping, idf_vector = create_tf_idf_context(corpus)
+
+for term, index in term_index_mapping.items(): 
+    print(term, idf_vector[index]) 
+
 
