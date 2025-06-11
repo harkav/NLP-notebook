@@ -5,3 +5,4 @@ Vector similarity algorithms:
 - [] Write tests and an explanation for TF-IDF.
 - [] Expand a bit more on the theory here and there, fix issue in BoW explanation. 
 - [] Go over the whole document, fix bugs. 
+- [] Read about L2 norm, write a section. 
