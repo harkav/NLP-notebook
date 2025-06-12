@@ -1,5 +1,3 @@
-import pytest
-import math
 from utils.tf_idf import document_frequency, create_tf_idf_context, tokenize, term_frequency, tf_idf_2
 
 
@@ -42,9 +40,9 @@ def test_tf():
 
 def test_tf_idf():
     term_index_mapping, idf = create_tf_idf_context(global_corpus)
+    doc1_tokenized = tokenize(global_corpus[0][0])
+    assert term_frequency("cat", doc1_tokenized) * idf[term_index_mapping["cat"]] == 0
+    assert abs(term_frequency("mat", doc1_tokenized) * idf[term_index_mapping["mat"]] - 0.40546) < 1e-5
+    assert abs(term_frequency("the", doc1_tokenized)) * idf[term_index_mapping["the"]] - (-0.57536) < 1e-5
     
-    assert idf[term_index_mapping["cat"]] == 0
-   
-    
-    
-    
+  
