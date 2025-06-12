@@ -15,6 +15,8 @@ def tokenize(document: str) -> list[str]:
     return processed
 
 def document_frequency(all_words : set[str], corpus: list[list[str]]) -> dict[str, int]:
+    """ Calculate document frequency for all terms in corpus, return doc freq dict"""
+    
     df_dict = {}
     # tokenize docs
     tokenized_all_docs = [] 
@@ -36,9 +38,12 @@ def document_frequency(all_words : set[str], corpus: list[list[str]]) -> dict[st
     return df_dict
 
 def term_frequency(term: str, doc: list[str]) -> int:
+    """Return count of term in doc """
     return doc.count(term)
 
 def create_tf_idf_context(corpus: list[list[str]]) -> tuple[dict[str, int], list[float]]:
+    """ Creates the term_index_mapping dict and the idf_vector"""
+    
     all_words = {word 
                  for doc in corpus 
                  for sentence in doc
@@ -52,7 +57,8 @@ def create_tf_idf_context(corpus: list[list[str]]) -> tuple[dict[str, int], list
         idf_vector[idx] = math.log(N / (1 + df_dict.get(term, 0)))
     return term_index_mapping, idf_vector
 
-def tf_idf_2(term_index_mapping: dict[str, int], document: list[str], idf_vector: np.ndarray) -> np.ndarray:
+def tf_idf(term_index_mapping: dict[str, int], document: list[str], idf_vector: np.ndarray) -> np.ndarray:
+    """ Creates tf-idf vector for document"""
     
     # first we create the empty vector which will be the tf-idf vector of a document.
     tfidf_vector = np.zeros(len(idf_vector))
