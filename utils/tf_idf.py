@@ -65,32 +65,3 @@ def tf_idf_2(term_index_mapping: dict[str, int], document: list[str], idf_vector
             # calculate the tf_idf score, update vector
             tfidf_vector[idx] = tf * idf_vector[idx]
     return tfidf_vector
-
-# ----------- Example Usage -----------
-
-
-corpus = [["The cat sat on the mat"], 
-        ["The duck is not happy"], 
-        ["The cat and dog are friends"]]
-
-
-term_index_mapping, idf_vector = create_tf_idf_context(corpus)
-
-# print all idfs 
-for term, index in term_index_mapping.items(): 
-    print(term, idf_vector[index]) 
-
-
-def print_all_tf_idf_values(term_index_mapping: dict[str, int], corpus : list[list[str]], idf_vector : np.ndarray) -> None: 
-    counter = 0
-    for doc in corpus:
-        doc = doc[0] # to get the doc as a str
-        tokens = tokenize(doc)
-        tf_idf_vector = tf_idf_2(term_index_mapping, tokens, idf_vector)
-        for token in tokens:
-            print(f"doc number: {counter} term : {token} tf_idf {tf_idf_vector[term_index_mapping[token]]}")
-        counter += 1
-            
-            
-
-print_all_tf_idf_values(term_index_mapping, corpus, idf_vector)
